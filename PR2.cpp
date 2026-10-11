@@ -8,6 +8,7 @@ int  left_part;
 char letters[26];
 int  count;
 int  all[91];
+int  used[10];
 
 int perevod(char* w, int n) {
     int v = 0;
@@ -18,14 +19,6 @@ int perevod(char* w, int n) {
 }
 
 int check(void) {
-    for (int i = 0; i < count; i++) {
-        for (int j = i + 1; j < count; j++) {
-            if (all[(int)letters[i]] == all[(int)letters[j]]) {
-                return 0;
-            }
-        }
-    }
-
     for (int i = 0; i < number; i++) {
         if (all[(int)rebus[i][0]] == 0)
         {
@@ -48,11 +41,17 @@ int solve(int i) {
     }
     for (int d = 0; d <= 9; d++)
     {
+        if (used[d])
+        {
+            continue;
+        }
+        used[d] = 1;
         all[(int)letters[i]] = d;
         if (solve(i + 1) == 1)
         {
             return 1;
         }
+        used[d] = 0;
     }
     return 0;
 }
@@ -124,6 +123,15 @@ char* mainpart(const char* stroka)
                 letters[count++] = ch;
             }
         }
+    }
+
+    for (int i = 0; i < 91; i++)
+    {
+        all[i] = -1;
+    }
+    for (int i = 0; i < 10; i++)
+    {
+        used[i] = 0;
     }
 
     if (!solve(0))
