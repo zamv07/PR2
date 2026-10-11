@@ -7,25 +7,30 @@ int  number;
 int  left_part;
 char letters[26];
 int  count;
-int  all[91];
+int  all[26];
 int  used[10];
-int  first_let[91];
+int  first_let[26];
 
 int perevod(char* w, int n) {
     int v = 0;
     for (int i = 0; i < n; i++) {
-        v = v * 10 + all[(int)w[i]];
+        v = v * 10 + all[w[i] - 'A'];
     }
     return v;
 }
 
 int check(void) {
+    int right = perevod(rebus[left_part], word_len[left_part]);
     int sum = 0;
     for (int i = 0; i < left_part; i++)
     {
         sum += perevod(rebus[i], word_len[i]);
+        if (sum > right)
+        {
+            return 0;
+        }
     }
-    return sum == perevod(rebus[left_part], word_len[left_part]);
+    return sum == right;
 }
 
 int solve(int i) {
@@ -39,12 +44,12 @@ int solve(int i) {
         {
             continue;
         }
-        if (d == 0 && first_let[(int)letters[i]])
+        if (d == 0 && first_let[letters[i] - 'A'])
         {
             continue;
         }
         used[d] = 1;
-        all[(int)letters[i]] = d;
+        all[letters[i] - 'A'] = d;
         if (solve(i + 1) == 1)
         {
             return 1;
@@ -123,7 +128,7 @@ char* mainpart(const char* stroka)
         }
     }
 
-    for (int i = 0; i < 91; i++)
+    for (int i = 0; i < 26; i++)
     {
         all[i] = -1;
         first_let[i] = 0;
@@ -134,7 +139,7 @@ char* mainpart(const char* stroka)
     }
     for (int i = 0; i < number; i++)
     {
-        first_let[(int)rebus[i][0]] = 1;
+        first_let[rebus[i][0] - 'A'] = 1;
     }
 
     if (!solve(0))
@@ -147,7 +152,7 @@ char* mainpart(const char* stroka)
     {
         if (stroka[i] >= 'A' && stroka[i] <= 'Z')
         {
-            ans[p++] = '0' + all[(int)stroka[i]];
+            ans[p++] = '0' + all[stroka[i] - 'A'];
         }
         else
         {
